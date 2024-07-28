@@ -1,4 +1,4 @@
-from flask import Flask,redirect, render_template,url_for,request
+from flask import Flask, make_response,redirect, render_template,url_for,request
 
 
 app = Flask(__name__)
@@ -23,19 +23,35 @@ def result():
    return render_template('marks.html', result = dict)
 
 
-# @app.route("/")
-# def index():
-#    return render_template("index.html")
+@app.route("/")
+def index():
+   return render_template("index_one.html")
 
-@app.route('/')
-def student():
-   return render_template('student.html')
+# @app.route('/')
+# def student():
+#    return render_template('student.html')
 
 @app.route('/result',methods = ['POST', 'GET'])
 def new_result():
    if request.method == 'POST':
       result = request.form
       return render_template("new_results.html",result = result)
+   
+@app.route('/setcookie', methods = ['POST', 'GET'])
+def setcookie():
+   if request.method == 'POST':
+      user = request.form['nm']
+   
+   resp = make_response(render_template('readcookie.html'))
+   resp.set_cookie('userID', user)
+   
+   return resp
+
+@app.route('/getcookie')
+def getcookie():
+   name = request.cookies.get('userID')
+   return '<h1>welcome '+name+'</h1>'
+
 
 if __name__ == '__main__':
    app.run(debug=True)
